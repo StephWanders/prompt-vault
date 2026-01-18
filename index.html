@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Prompt Vault Access</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:760px;margin:40px auto;padding:0 18px;line-height:1.5}
+    .card{border:1px solid rgba(0,0,0,.12);border-radius:14px;padding:18px 18px 14px}
+    input{width:100%;padding:12px 12px;border-radius:10px;border:1px solid rgba(0,0,0,.2);font-size:16px}
+    button{margin-top:10px;padding:10px 14px;border:0;border-radius:10px;font-size:16px;cursor:pointer}
+    .hint{color:rgba(0,0,0,.65);font-size:14px;margin-top:10px}
+    .err{color:#b00020;margin-top:10px;display:none}
+  </style>
+</head>
+<body>
+  <h1>Prompt Vault Access</h1>
+  <p>Enter the access code from the book to open the copy/paste Prompt Vault.</p>
+
+  <div class="card">
+    <label for="code"><strong>Access code</strong></label><br/>
+    <input id="code" autocomplete="off" placeholder="Type the code exactly as printed" />
+    <button id="btn">Open Vault</button>
+    <div id="err" class="err">Sorry — that code doesn’t match. Please check the exact spelling.</div>
+    <p class="hint">Please keep this code for personal use only — it helps protect the work behind the vault.</p>
+  </div>
+
+<script>
+  // 1) Put the SHA-256 hash of your access code here (lowercase hex)
+  const ACCESS_HASH = "PASTE_SHA256_HASH_HERE";
+
+  // 2) Set your hidden vault filename here
+  const VAULT_PAGE = "vault-8f3k2p9.html";
+
+  async function sha256Hex(str){
+    const data = new TextEncoder().encode(str.trim());
+    const digest = await crypto.subtle.digest("SHA-256", data);
+    return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2,"0")).join("");
+  }
+
+  async function tryOpen(){
+    const input = document.getElementById("code").value;
+    const h = await sha256Hex(input);
+    if (h === ACCESS_HASH){
+      localStorage.setItem("pv_ok","1");
+      window.location.href = VAULT_PAGE;
+    } else {
+      document.getElementById("err").style.display = "block";
+    }
+  }
+
+  // Auto-bypass if already unlocked on this device
+  if (localStorage.getItem("pv_ok") === "1"){
+    window.location.href = VAULT_PAGE;
+  }
+
+  document.getElementById("btn").addEventListener("click", tryOpen);
+  document.getElementById("code").addEventListener("keydown", (e)=>{ if(e.key==="Enter") tryOpen(); });
+</script>
+</body>
+</html>
