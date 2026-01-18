@@ -26,32 +26,33 @@
   </div>
 
 <script>
-  // Set your hidden vault filename here (must match your real file exactly)
-  const VAULT_PAGE = "vault-8f3k2p9.html"; // <-- CHANGE THIS
-
-  // The access code as printed in the book
   const ACCESS_CODE = "BLOOM-VAULT-2026";
+  const VAULT_PAGE  = "vault-8f3k2p9.html"; // <-- put your real vault filename here
 
   function tryOpen(){
     const input = (document.getElementById("code")?.value || "").trim();
-
     if (input === ACCESS_CODE){
       localStorage.setItem("pv_ok","1");
       window.location.href = VAULT_PAGE;
       return;
     }
-
     const err = document.getElementById("err");
     if (err) err.style.display = "block";
   }
 
-  // Auto-bypass if already unlocked on this device
-  if (localStorage.getItem("pv_ok") === "1"){
-    window.location.href = VAULT_PAGE;
-  }
+  window.addEventListener("DOMContentLoaded", () => {
+    // auto-bypass if already unlocked
+    if (localStorage.getItem("pv_ok") === "1"){
+      window.location.href = VAULT_PAGE;
+      return;
+    }
 
-  document.getElementById("btn")?.addEventListener("click", tryOpen);
-  document.getElementById("code")?.addEventListener("keydown", (e)=>{ if(e.key==="Enter") tryOpen(); });
+    const btn = document.getElementById("btn");
+    const code = document.getElementById("code");
+
+    if (btn) btn.addEventListener("click", tryOpen);
+    if (code) code.addEventListener("keydown", (e)=>{ if(e.key==="Enter") tryOpen(); });
+  });
 </script>
 
 </body>
