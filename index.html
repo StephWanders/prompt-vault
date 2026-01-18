@@ -38,14 +38,20 @@
     return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2,"0")).join("");
   }
 
-  async function tryOpen(){
-    const input = document.getElementById("code").value;
-    const h = await sha256Hex(input);
-    if (h === ACCESS_HASH){
-      localStorage.setItem("pv_ok","1");
-      window.location.href = VAULT_PAGE;
-    } else {
-      document.getElementById("err").style.display = "block";
+async function tryOpen(){
+  const input = document.getElementById("code").value.trim();
+
+  // Put your exact code here (exactly as you will print it)
+  const ACCESS_CODE = "BLOOM-VAULT-2026";
+
+  if (input === ACCESS_CODE){
+    localStorage.setItem("pv_ok","1");
+    window.location.href = VAULT_PAGE;
+  } else {
+    document.getElementById("err").style.display = "block";
+  }
+}
+
     }
   }
 
