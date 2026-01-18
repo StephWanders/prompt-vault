@@ -26,33 +26,23 @@
   </div>
 
 <script>
-  // 1) Put the SHA-256 hash of your access code here (lowercase hex)
-  const ACCESS_HASH = "67a195acbb4fe3e409dbdc0812470378f649939671f1134d5de8bb8e2280baf2";
+  // Set your hidden vault filename here (must match your real file exactly)
+  const VAULT_PAGE = "vault-8f3k2p9.html"; // <-- CHANGE THIS
 
-  // 2) Set your hidden vault filename here
-  const VAULT_PAGE = "vault-8f3k2p9.html";
-
-  async function sha256Hex(str){
-    const data = new TextEncoder().encode(str.trim());
-    const digest = await crypto.subtle.digest("SHA-256", data);
-    return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2,"0")).join("");
-  }
-
-async function tryOpen(){
-  const input = document.getElementById("code").value.trim();
-
-  // Put your exact code here (exactly as you will print it)
+  // The access code as printed in the book
   const ACCESS_CODE = "BLOOM-VAULT-2026";
 
-  if (input === ACCESS_CODE){
-    localStorage.setItem("pv_ok","1");
-    window.location.href = VAULT_PAGE;
-  } else {
-    document.getElementById("err").style.display = "block";
-  }
-}
+  function tryOpen(){
+    const input = (document.getElementById("code")?.value || "").trim();
 
+    if (input === ACCESS_CODE){
+      localStorage.setItem("pv_ok","1");
+      window.location.href = VAULT_PAGE;
+      return;
     }
+
+    const err = document.getElementById("err");
+    if (err) err.style.display = "block";
   }
 
   // Auto-bypass if already unlocked on this device
@@ -60,8 +50,9 @@ async function tryOpen(){
     window.location.href = VAULT_PAGE;
   }
 
-  document.getElementById("btn").addEventListener("click", tryOpen);
-  document.getElementById("code").addEventListener("keydown", (e)=>{ if(e.key==="Enter") tryOpen(); });
+  document.getElementById("btn")?.addEventListener("click", tryOpen);
+  document.getElementById("code")?.addEventListener("keydown", (e)=>{ if(e.key==="Enter") tryOpen(); });
 </script>
+
 </body>
 </html>
